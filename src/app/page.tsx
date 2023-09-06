@@ -1,5 +1,5 @@
 'use client';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import libros from '../books.json';
 import close from '../assets/close.svg';
 import BookCard from '../components/Book';
@@ -7,13 +7,18 @@ import { Book } from '@/types';
 import Filters from '@/components/Filters';
 
 export default function Home() {
-  const rawBooks = libros.library.map((libro) => libro.book);
+  const rawBooks : Book[] = libros.library.map((libro) => libro.book);
+  const uniqueGenres: string[] = Array.from(new Set(rawBooks.map(( book ) => book.genre)));
+  const maxPages : string = String(Math.max(...rawBooks.map((obj) => obj.pages)));
   const [list, setList] = useState<Book[]>(JSON.parse(localStorage.getItem('list') ?? '[]'));
   const [books, setBooks] = useState<Book[]>(rawBooks);
-  const [selectedGenre, setSelectedGenre] = useState<string>('todos');
-  const maxPages = String(Math.max(...rawBooks.map((obj) => obj.pages)));
+  const [selectedGenre, setSelectedGenre] = useState<string>('');
   const [pages, setPages] = useState<string>(String(maxPages));
-  const uniqueGenres = Array.from(new Set(libros.library.map(({ book }) => book.genre)));
+
+  addEventListener("storage", () => {
+   const refreshList = JSON.parse(localStorage.getItem('list') ?? '[]')
+   setList(refreshList);
+  });
 
   const updateList = (libro: Book) => {
     if (list.find((book) => book.ISBN === libro.ISBN)) {
@@ -51,7 +56,7 @@ export default function Home() {
           <div className='grid grid-cols-2 place-content-start gap-2'>
             {list.map((book) => (
               <article key={book.ISBN} className='relative'>
-                <img className='w-80 h-[306px] object-cover rounded-lg' src={book.cover} alt={book.title} />
+                <img className='w-72 h-[278px] object-cover rounded-lg' src={book.cover} alt={book.title} />
                 <img className='w-7 p-1 absolute top-2 right-2 bg-[#00000096] rounded-lg cursor-pointer' src={close.src} alt='Close' onClick={() => updateList(book)} />
               </article>
             ))}

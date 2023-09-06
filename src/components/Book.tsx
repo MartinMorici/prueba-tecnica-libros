@@ -9,7 +9,7 @@ interface Props {
   updateList: (libro: Book) => void;
 }
 
-const BookCard = ({ book, updateList: addToList, list }: Props) => {
+const BookCard = ({ book, updateList, list }: Props) => {
   const [isAdded, setIsAdded] = useState<boolean>(false);
 
     useEffect(() => {
@@ -25,7 +25,7 @@ const BookCard = ({ book, updateList: addToList, list }: Props) => {
       <button
         className={`cursor-pointer ${isAdded && 'bg-red-900'} bg-purple-900 py-1 px-2 rounded-md text-[13px] mt-4 flex gap-1 justify-center items-center`}
         onClick={() => {
-          addToList(book);
+          updateList(book);
           setIsAdded(!isAdded);
         }}
       >

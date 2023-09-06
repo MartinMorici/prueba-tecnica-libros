@@ -20,19 +20,19 @@ const Filters = ({ uniqueGenres, pages, maxPages,selectedGenre, setSelectedGenre
 
     if (filtro === 'genre') {
       setSelectedGenre(e.target.value);
-      if (e.target.value === 'todos') {
-        filteredBooks = rawBooks!.map((book) => book);
-      } else {
-        filteredBooks = rawBooks.filter((book) => book.genre === e.target.value);
+      if (e.target.value) {
+        filteredBooks = rawBooks.filter((book) => book.genre === e.target.value)
+      } else{
+        filteredBooks = rawBooks
       }
     }
 
     if (filtro === 'pages') {
       setPages(e.target.value);
-      if (selectedGenre === 'todos') {
-        filteredBooks = rawBooks.filter((book) => book.pages <= parseFloat(e.target.value));
-      } else {
+      if (selectedGenre) {
         filteredBooks = rawBooks.filter((book) => book.genre === selectedGenre && book.pages <= parseFloat(e.target.value));
+      } else {
+        filteredBooks = rawBooks.filter((book) => book.pages <= parseFloat(e.target.value));
       }
     }
 
@@ -46,7 +46,7 @@ const Filters = ({ uniqueGenres, pages, maxPages,selectedGenre, setSelectedGenre
           Filtrar por género
         </label>
         <select className='text-lg' name='' id='genre' onChange={(e) => filterBooks(e, 'genre')}>
-          <option value='todos'>Todos</option>
+          <option value=''>Todos</option>
           {uniqueGenres.map((genre) => (
             <option key={genre} value={genre}>
               {genre}
