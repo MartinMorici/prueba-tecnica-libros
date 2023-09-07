@@ -40,12 +40,10 @@ const Filters = ({ uniqueGenres, pages, maxPages,selectedGenre, setSelectedGenre
   };
 
   return (
-    <form action='' className='col-span-full flex gap-8 text-xl'>
+    <form action='' className='col-span-full flex flex-col sm:flex-row  gap-8 text-lg'>
       <div>
-        <label htmlFor='genre' className='block'>
-          Filtrar por género
-        </label>
-        <select className='text-lg' name='' id='genre' onChange={(e) => filterBooks(e, 'genre')}>
+        <label htmlFor='genre' className='block'>Filtrar por género</label>
+        <select className={`font-sans text-base`} name='' id='genre' onChange={(e) => filterBooks(e, 'genre')}>
           <option value=''>Todos</option>
           {uniqueGenres.map((genre) => (
             <option key={genre} value={genre}>
@@ -55,10 +53,8 @@ const Filters = ({ uniqueGenres, pages, maxPages,selectedGenre, setSelectedGenre
         </select>
       </div>
       <div>
-        <label htmlFor='paginas' className='block'>
-          Hasta {pages} páginas
-        </label>
-        <input className=' accent-red-500' type='range' id='paginas' onChange={(e) => filterBooks(e, 'pages')} value={pages} max={maxPages} />
+        <label htmlFor='paginas' className='block'>Hasta {pages} páginas</label>
+        <input className=' accent-indigo-800' type='range' id='paginas' onChange={(e) => filterBooks(e, 'pages')} value={pages} max={maxPages} />
       </div>
     </form>
   );
