@@ -11,7 +11,7 @@ export default function Home() {
   const rawBooks: Book[] = libros.library.map((libro) => libro.book);
   const uniqueGenres: string[] = Array.from(new Set(rawBooks.map((book) => book.genre)));
   const maxPages: string = String(Math.max(...rawBooks.map((obj) => obj.pages)));
-  const [list, setList] = useState<Book[]>(JSON.parse(localStorage.getItem('list') ?? '[]'));
+  const [list, setList] = useState<Book[]>([]);
   const [books, setBooks] = useState<Book[]>(rawBooks);
   const [selectedGenre, setSelectedGenre] = useState<string>('');
   const [pages, setPages] = useState<string>(String(maxPages));
@@ -37,6 +37,7 @@ export default function Home() {
   };
 
   useEffect(() => {
+    JSON.parse(localStorage.getItem('list') ?? '[]')
     setPages(maxPages);
   }, [selectedGenre]);
 
