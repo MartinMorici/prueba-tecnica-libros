@@ -16,11 +16,6 @@ export default function Home() {
   const [selectedGenre, setSelectedGenre] = useState<string>('');
   const [pages, setPages] = useState<string>(String(maxPages));
 
-  addEventListener('storage', () => {
-    const refreshList = JSON.parse(localStorage.getItem('list') ?? '[]');
-    setList(refreshList);
-  });
-
   const updateList = (libro: Book) => {
     if (list.find((book) => book.ISBN === libro.ISBN)) {
       const currentStorage = JSON.parse(localStorage.getItem('list') ?? '[]');
@@ -37,7 +32,10 @@ export default function Home() {
   };
 
   useEffect(() => {
-    JSON.parse(localStorage.getItem('list') ?? '[]')
+    addEventListener('storage', () => {
+      const refreshList = JSON.parse(localStorage.getItem('list') ?? '[]');
+      setList(refreshList);
+    });
     setPages(maxPages);
   }, [selectedGenre]);
 
