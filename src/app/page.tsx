@@ -1,11 +1,10 @@
 'use client';
 import { useEffect, useState } from 'react';
 import libros from '../books.json';
-import close from '../assets/close.svg';
-import emptyIcon from '../assets/empty.svg';
 import BookCard from '../components/BookCard';
 import { Book } from '@/types';
 import Filters from '@/components/Filters';
+import List from '@/components/List';
 
 export default function Home() {
   const rawBooks: Book[] = libros.library.map((libro) => libro.book);
@@ -15,6 +14,7 @@ export default function Home() {
   const [books, setBooks] = useState<Book[]>(rawBooks);
   const [selectedGenre, setSelectedGenre] = useState<string>('');
   const [pages, setPages] = useState<string>(String(maxPages));
+  const [isLoading, setIsLoading] = useState(true)
 
   const updateList = (libro: Book) => {
     if (list.find((book) => book.ISBN === libro.ISBN)) {
@@ -32,12 +32,25 @@ export default function Home() {
   };
 
   useEffect(() => {
-    addEventListener('storage', () => {
-      const refreshList = JSON.parse(localStorage.getItem('list') ?? '[]');
-      setList(refreshList);
-    });
     setPages(maxPages);
   }, [selectedGenre]);
+
+  useEffect(() => {
+    setList(JSON.parse(localStorage.getItem('list') ?? '[]'));
+
+    const simultaneousRefresh = () => {
+      const refreshList = JSON.parse(localStorage.getItem('list') ?? '[]');
+      setList(refreshList);
+    };
+
+    addEventListener('storage', simultaneousRefresh);
+    setIsLoading(false)
+
+    return () => {
+      window.removeEventListener('storage', simultaneousRefresh);
+    };
+
+  }, []);
 
   return (
     <main className='max-w-screen-2xl w-full mx-auto py-4 px-4 flex flex-col lg:flex-row gap-16 '>
@@ -46,36 +59,11 @@ export default function Home() {
           <h2 className='text-3xl mb-2 sm:mb-0 sm:text-4xl sm:pr-4'>Nuestros libros...</h2>
           <Filters uniqueGenres={uniqueGenres} pages={pages} maxPages={maxPages} setBooks={setBooks} setSelectedGenre={setSelectedGenre} setPages={setPages} rawBooks={rawBooks} selectedGenre={selectedGenre} />
         </div>
-        {books.map((book) => (
+        {!isLoading && books.map((book) => (
           <BookCard key={book.ISBN} book={book} list={list} updateList={updateList}></BookCard>
         ))}
       </section>
-      <section className='sm:ml-8 px-1 sm:px-0 bg-gray-900 max-w-[350px] w-full rounded-3xl mx-auto sm:mx-0'>
-        <h4 className='text-center text-3xl sm:text-4xl mt-4 mb-4 max-w-[400px]'>Lista de Lectura</h4>
-        {list.length <= 0 && (
-          <div className='h-[calc(100vh-56px)] flex flex-col justify-center'>
-            <img className='w-16 block mx-auto' src={emptyIcon.src} alt='Empty' />
-            <h5 className='text-neutral-300 text-center'>
-              ¡Oops, todavía no agregaste ningun <br /> libro a tu lista!
-            </h5>
-          </div>
-        )}
-        <ol className='list-decimal list-inside h-max  p-4 rounded-lg'>
-          {list.map((book, index) => (
-            <li key={book.ISBN} className='flex items-center gap-4 mb-4'>
-              <span className='hidden sm:block whitespace-nowrap tabular-nums'>{index + 1} .</span>
-              <img className='object-cover rounded-lg w-16' src={book.cover} alt={book.title} />
-              <div>
-                <h5 className='font-semibold  whitespace-nowrap overflow-hidden  text-ellipsis  max-w-[106px] sm:max-w-[160px] '>{book.title}</h5>
-                <h5>{book.author.name}</h5>
-              </div>
-              <div className='ml-auto w-4 h-4'>
-                <img className='cursor-pointer' src={close.src} alt='Close' onClick={() => updateList(book)} />
-              </div>
-            </li>
-          ))}
-        </ol>
-      </section>
+      <List list={list} updateList={updateList} />
     </main>
   );
 }

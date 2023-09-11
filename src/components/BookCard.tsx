@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, SetStateAction, Dispatch } from 'react';
 import add from '../assets/add-new.svg';
 import { Book } from '@/types';
 
@@ -9,7 +9,7 @@ interface Props {
   updateList: (libro: Book) => void;
 }
 
-const BookCard = ({ book, updateList, list }: Props) => {
+const BookCard = ({ book, updateList, list}: Props) => {
   const [isAdded, setIsAdded] = useState<boolean>(false);
 
     useEffect(() => {
